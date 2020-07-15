@@ -1,0 +1,14 @@
+# base ignoreable files
+node_modules
+coverage
+.nyc_output
+Dockerfile
+docker-compose.ci.yml
+CHANGELOG.md
+.development.env
+.prettierrc
+tsconfig.json
+tslint.json
+
+# typescript specific ignorable files
+src
