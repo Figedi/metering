@@ -10,12 +10,14 @@ orbs:
         working_directory: ~/code
         docker:
           - image: figedi/circleci-node-gcloud
+
     commands:
       attach_to_code_workspace:
         description: "[ci] Attaches to ~/code"
         steps:
           - attach_workspace:
               at: ~/code
+
       setup_npm_access:
         description: "[npm] Command for setting up npm Access"
         parameters:
@@ -31,6 +33,7 @@ orbs:
               command: |
                 npm set registry https://<< parameters.npm_registry >>
                 echo "//<< parameters.npm_registry >>/:_authToken=<< parameters.npm_registry_token >>" > ~/.npmrc
+
       persist_state_for_next_job:
         parameters: 
           persist_full_state:
@@ -234,6 +237,7 @@ orbs:
               docker image tag ${IMAGE_NAME}:${CIRCLE_SHA1}-<< parameters.image >> "${IMAGE_NAME}:${BUILD_VERSION}"
               docker image tag ${IMAGE_NAME}:${CIRCLE_SHA1}-<< parameters.image >> "${IMAGE_NAME}:latest"
               rm -rf docker-cache
+
       restore_bash_env:
         description: "[ci] Restore bash-env"
         steps:
@@ -249,7 +253,6 @@ orbs:
           working_directory:
             type: string
             default: "."
-
         steps:
           - run:
               name: "[ci] Determine image name"
@@ -302,7 +305,6 @@ orbs:
               rm -rf node_modules ~/tmp_artifacts
               docker rm temp-copy-container
 
-
       push_repo_changes_to_git:
         parameters:
           stash_before_pull:
@@ -330,13 +332,21 @@ orbs:
           working_directory:
             type: string
             default: "."
+          public:
+            type: boolean
+            default: false
+          release_branch_name:
+            type: string
+            default: release
         description: "[npm] Push package to npm registry"
         steps:
-        - run:
-            name: "[npm] Push package to npm registry"
-            command: |
-              cd << parameters.working_directory >>
-              ~/helpers/ci-toolkit npm-publish .
+          - run:
+              name: "[npm] Push package to npm registry (PUBLIC = << parameters.public >>)"
+              command: |
+                cd << parameters.working_directory >>
+                NPM_IS_PUBLIC=$(<< parameters.public >> && echo "--access public")
+                NPM_IS_BETA=$([[ $CIRCLE_BRANCH == << parameters.release_branch_name >>/* ]] && echo "--tag beta")
+                npm publish $NPM_IS_PUBLIC $NPM_IS_BETA
 
     jobs:
       checkout_bump_and_build:
@@ -458,6 +468,12 @@ orbs:
           npm_registry_token:
             type: string
             default: ${NPM_REGISTRY_TOKEN}
+          release_branch_name:
+            type: string
+            default: release
+          public:
+            type: boolean
+            default: false
         steps:
           - attach_to_code_workspace
           - setup_remote_docker
@@ -466,13 +482,12 @@ orbs:
               image: << parameters.image >>
           - setup_npm_access:
               npm_registry_token: << parameters.npm_registry_token >>
-          - download_ci_toolkit:
-              ci_toolkit_url: << parameters.ci_toolkit_url >>
           - extract_app_from_docker_image:
               working_directory: << parameters.working_directory >>
           - push_package_to_npm:
               working_directory: << parameters.working_directory >>
-
+              public: << parameters.public >>
+              release_branch_name: << parameters.release_branch_name >>
 
 workflows:
   ci:
@@ -510,6 +525,7 @@ workflows:
           name: push_to_npm
           context: ci-default-v1
           image: builder
+          public: true
           filters:
             branches:
               only:
