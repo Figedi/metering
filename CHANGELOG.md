@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/figedi/metering/compare/v1.1.2...v1.1.3) (2020-07-19)
+
+
+### Bug Fixes
+
+* keeping .npmignore to avoid expensive npm pushes ([b5b8606](https://github.com/figedi/metering/commit/b5b86063043be5a3af86263dbfbb3190610e385c))
+
 ### [1.1.2](https://github.com/figedi/metering/compare/v1.1.1...v1.1.2) (2020-07-19)
 
 
