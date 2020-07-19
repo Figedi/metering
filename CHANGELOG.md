@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/figedi/metering/compare/v1.1.0...v1.1.1) (2020-07-19)
+
+
+### Bug Fixes
+
+* uses node-gcloud executor for npm push ([2393571](https://github.com/figedi/metering/commit/23935710a3ff082c02c96e59e3a0a41662ae2682))
+
 ## 1.1.0 (2020-07-19)
 
 
