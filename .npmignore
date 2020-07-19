@@ -5,10 +5,12 @@ coverage
 Dockerfile
 docker-compose.ci.yml
 CHANGELOG.md
+tsconfig.json
+lint-staged.config
 .development.env
 .prettierrc
-tsconfig.json
-tslint.json
-
+.eslintrc.js
+.dockerignore
+.commitlintrc.js
 # typescript specific ignorable files
 src

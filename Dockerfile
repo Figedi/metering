@@ -7,7 +7,6 @@ WORKDIR /opt/app
 ARG NPM_REGISTRY_TOKEN
 ARG CI
 
-COPY bin bin
 COPY package*.json ./
 
 RUN echo "//registry.npmjs.org/:_authToken=${NPM_REGISTRY_TOKEN}" > ~/.npmrc; \
@@ -18,11 +17,9 @@ RUN echo "//registry.npmjs.org/:_authToken=${NPM_REGISTRY_TOKEN}" > ~/.npmrc; \
   rm -rf ~/.npm;
 
 COPY src src
-COPY .prettierrc tsconfig.json tslint.json ./
+COPY .prettierrc tsconfig.json .eslintrc.js ./
 RUN npm run build
 
-ADD https://storage.googleapis.com/shuttle-assets/wait /wait
-RUN chmod +x /wait
 # we cannot run pre-publish within this docker image, thus we execute it by hand
 RUN npx "generate-export-aliases"
 
