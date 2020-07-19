@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.4](https://github.com/figedi/metering/compare/v1.1.3...v1.1.4) (2020-07-19)
+
+
+### Bug Fixes
+
+* avoids exit-code 1 in npm publish args generation ([bdadd80](https://github.com/figedi/metering/commit/bdadd804c98c8d4cc62124f00828401d190f3864))
+
 ### [1.1.3](https://github.com/figedi/metering/compare/v1.1.2...v1.1.3) (2020-07-19)
 
 
