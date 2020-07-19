@@ -506,6 +506,7 @@ workflows:
       - ci/push_to_npm:
           name: push_to_npm
           context: ci-default-v1
+          image: builder
           filters:
             branches:
               only:
