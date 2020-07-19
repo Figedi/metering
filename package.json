@@ -64,10 +64,6 @@
     "typescript": "^3.9.6"
   },
   "dependencies": {
-    "apollo-server-core": "^2.9.16",
-    "apollo-server-env": "^2.4.3",
-    "apollo-server-koa": "^2.9.16",
-    "graphql": "^14.7.0",
     "koa": "^2.13.0",
     "lodash": "^4.17.19",
     "prom-client": "^11.5.3",
