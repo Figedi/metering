@@ -343,8 +343,8 @@ orbs:
               name: "[npm] Push package to npm registry (PUBLIC = << parameters.public >>)"
               command: |
                 cd << parameters.working_directory >>
-                NPM_IS_PUBLIC=$(<< parameters.public >> && echo "--access public")
-                NPM_IS_BETA=$([[ $CIRCLE_BRANCH == << parameters.release_branch_name >>/* ]] && echo "--tag beta")
+                NPM_IS_PUBLIC=$(<< parameters.public >> && echo "--access public" || echo "")
+                NPM_IS_BETA=$([[ $CIRCLE_BRANCH == << parameters.release_branch_name >>/* ]] && echo "--tag beta" || echo "")
                 echo "Publishing to npm with args $NPM_IS_PUBLIC $NPM_IS_BETA"
                 npm publish $NPM_IS_PUBLIC $NPM_IS_BETA
 

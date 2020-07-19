@@ -1,16 +1,20 @@
 # base ignoreable files
-node_modules
 coverage
 .nyc_output
 Dockerfile
 docker-compose.ci.yml
 CHANGELOG.md
 tsconfig.json
-lint-staged.config
 .development.env
 .prettierrc
 .eslintrc.js
 .dockerignore
+.gitignore
+.editorconfig
 .commitlintrc.js
+node-prune.sh
+.circleci
+bin
+lint-staged.config.js
 # typescript specific ignorable files
 src
