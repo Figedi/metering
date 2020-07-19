@@ -300,7 +300,6 @@ orbs:
               cd << parameters.working_directory >>
               docker run --name temp-copy-container --entrypoint /bin/true ${IMAGE_NAME}
               docker cp temp-copy-container:/opt/app ~/tmp_artifacts
-              # todo: this ignores .npmignore, should we really do that? :s
               rsync -r --exclude '.*' --exclude node_modules ~/tmp_artifacts/ .
               rm -rf node_modules ~/tmp_artifacts
               docker rm temp-copy-container
@@ -346,6 +345,7 @@ orbs:
                 cd << parameters.working_directory >>
                 NPM_IS_PUBLIC=$(<< parameters.public >> && echo "--access public")
                 NPM_IS_BETA=$([[ $CIRCLE_BRANCH == << parameters.release_branch_name >>/* ]] && echo "--tag beta")
+                echo "Publishing to npm with args $NPM_IS_PUBLIC $NPM_IS_BETA"
                 npm publish $NPM_IS_PUBLIC $NPM_IS_BETA
 
     jobs:
@@ -495,6 +495,8 @@ workflows:
       - ci/checkout_bump_and_build:
           name: checkout_bump_and_build
           context: ci-default-v1
+          # do not strip dot-files for now (e.g. keep .npmignore)
+          persist_full_state: true
 
       - ci/lint:
           name: lint
