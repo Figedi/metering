@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/figedi/metering/compare/v1.1.1...v1.1.2) (2020-07-19)
+
+
+### Bug Fixes
+
+* adds public modifier to npm publish for ci ([08ef2f1](https://github.com/figedi/metering/commit/08ef2f10e33f0e92d2de0049fcb0d91cc5193ac7))
+
 ### [1.1.1](https://github.com/figedi/metering/compare/v1.1.0...v1.1.1) (2020-07-19)
 
 
