@@ -6,7 +6,10 @@ orbs:
         working_directory: ~/code
         docker:
           - image: circleci/node:10
-
+      node-gcloud-executor:
+        working_directory: ~/code
+        docker:
+          - image: figedi/circleci-node-gcloud
     commands:
       attach_to_code_workspace:
         description: "[ci] Attaches to ~/code"
@@ -441,7 +444,7 @@ orbs:
               stash_before_pull: << parameters.stash_before_pull >>
 
       push_to_npm:
-        executor: node-executor
+        executor: node-gcloud-executor
         parameters:
           working_directory:
             type: string 
