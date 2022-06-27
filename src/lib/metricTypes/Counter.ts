@@ -1,9 +1,9 @@
 import promClient from "prom-client";
 
 export class Counter {
-    private wrapped: promClient.Counter;
+    private wrapped: promClient.Counter<any>;
 
-    constructor(driver: typeof promClient, private config: promClient.CounterConfiguration) {
+    constructor(driver: typeof promClient, private config: promClient.CounterConfiguration<any>) {
         this.wrapped = new driver.Counter(config);
     }
 

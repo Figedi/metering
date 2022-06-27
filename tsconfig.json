@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2017",
+    "target": "es2021",
     "sourceMap": true,
     "declaration": true,
     "rootDir": "./src",
@@ -20,7 +20,7 @@
       "./node_modules/@types",
     ],
     "lib": [
-      "es2017"
+      "es2021"
     ]
   },
   "exclude": [

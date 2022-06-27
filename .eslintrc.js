@@ -1,12 +1,8 @@
 module.exports = {
-    plugins: ["@typescript-eslint", "eslint-comments", "promise"],
+    plugins: ["import"],
     extends: [
         "airbnb-typescript/base",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:eslint-comments/recommended",
-        "plugin:promise/recommended",
         "prettier",
-        "prettier/@typescript-eslint",
     ],
     env: {
         node: true,

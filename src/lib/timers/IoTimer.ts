@@ -1,16 +1,17 @@
 import { IComputationMeasure, IIoMeasure } from "./types";
 import { MeteringRecorder } from "../MeteringRecorder";
 import { Histogram } from "../metricTypes/Histogram";
+import { HistogramConfiguration } from "prom-client";
 
 export class IoTimer {
     private histogram: Histogram;
 
-    constructor(recorder: MeteringRecorder, labels: string[] = [], buckets: number[]) {
+    constructor(recorder: MeteringRecorder, config: Partial<HistogramConfiguration<any>>) {
         this.histogram = recorder.createHistogram(
-            "common__io_duration_seconds",
-            "Time taken for an IO operation",
-            ["counterpart", "operation", ...labels],
-            buckets,
+            config.name!,
+            config.help!,
+            ["counterpart", "operation", ...(config.labelNames ?? [])],
+            config.buckets ?? [],
         );
     }
 
@@ -42,18 +43,17 @@ export class IoTimer {
         operation: string,
         labelSet: Record<string, string>,
         compMeasure: IComputationMeasure | null,
-        block: () => Promise<T>,
+        promFn: () => Promise<T>,
     ): Promise<T> {
         const ioMeasure = this.create(counterpart, operation, labelSet);
-        let blockResult: T;
         try {
-            blockResult = await block();
+            const result = await promFn();
 
             ioMeasure();
             if (compMeasure) {
                 compMeasure.discountIo(ioMeasure);
             }
-            return blockResult;
+            return result;
         } catch (error) {
             ioMeasure();
             if (compMeasure) {

@@ -1,9 +1,9 @@
 import promClient from "prom-client";
 
 export class Summary {
-    private wrapped: promClient.Summary;
+    private wrapped: promClient.Summary<any>;
 
-    constructor(driver: typeof promClient, private config: promClient.SummaryConfiguration) {
+    constructor(driver: typeof promClient, private config: promClient.SummaryConfiguration<any>) {
         this.wrapped = new driver.Summary(config);
     }
 

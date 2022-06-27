@@ -1,9 +1,9 @@
 import promClient from "prom-client";
 
 export class Histogram {
-    private wrapped: promClient.Histogram;
+    private wrapped: promClient.Histogram<any>;
 
-    constructor(driver: typeof promClient, private config: promClient.HistogramConfiguration) {
+    constructor(driver: typeof promClient, private config: promClient.HistogramConfiguration<any>) {
         this.wrapped = new driver.Histogram(config);
     }
 

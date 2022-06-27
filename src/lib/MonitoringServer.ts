@@ -1,71 +1,62 @@
-import Koa from "koa";
-import { Server } from "http";
+import fastify, { FastifyInstance } from "fastify";
 
 import { MeteringRecorder } from "./MeteringRecorder";
-import { MonitoringService } from "./monitoringService/MonitoringService";
 import { Loggerlike } from "./types";
 
 type MonioringMiddlewareDependencies = {
+    server: FastifyInstance;
     meteringRecorder: MeteringRecorder;
     enableDefaultMetrics?: boolean;
-    monitoringService: MonitoringService;
 };
 
-const createMonitoringMiddleware = ({
+const assignMonitoringRoutes = ({
+    server,
     meteringRecorder,
     enableDefaultMetrics,
-    monitoringService,
 }: MonioringMiddlewareDependencies) => {
     if (enableDefaultMetrics) {
         meteringRecorder.enableDefaultMetrics();
     }
 
-    return async <T>(ctx: Koa.ParameterizedContext, next: () => Promise<T>) => {
-        if (ctx.path === "/metrics" && ctx.method === "GET") {
-            ctx.body = meteringRecorder.getPrometheusResponse();
-        }
-
-        if (ctx.path === "/status" && ctx.method === "GET") {
-            ctx.body = monitoringService.getResponse();
-            ctx.status = monitoringService.getStatusCode();
-        }
-
-        return next();
-    };
+    server.get("/metrics", async () => meteringRecorder.getPrometheusResponse());
 };
 
 export class MonitoringServer {
-    private static BIND_ADDRESS = "0.0.0.0";
+    private BIND_ADDRESS = "0.0.0.0";
 
-    private app?: Koa;
-    private server: Server | null;
+    private server?: FastifyInstance;
 
     constructor(
         private recorder: MeteringRecorder,
-        private monitoringService: MonitoringService,
         private logger: Loggerlike,
         private enableDefaultMetrics = true,
         private port = 9500,
     ) {}
 
     public async start(): Promise<void> {
-        this.app = new Koa();
+        this.server = fastify();
+        assignMonitoringRoutes({
+            server: this.server,
+            meteringRecorder: this.recorder,
+            enableDefaultMetrics: this.enableDefaultMetrics,
+        });
 
-        this.app.use(
-            createMonitoringMiddleware({
-                meteringRecorder: this.recorder,
-                monitoringService: this.monitoringService,
-                enableDefaultMetrics: this.enableDefaultMetrics,
+        await new Promise<void>((resolve, reject) =>
+            this.server!.listen({ port: this.port, host: this.BIND_ADDRESS }, error => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve();
             }),
         );
-        this.server = this.app.listen(this.port, MonitoringServer.BIND_ADDRESS);
-        this.logger.info(`Metering endpoint running at ${MonitoringServer.BIND_ADDRESS}:${this.port}`);
+        this.logger.info(`Monitoring endpoint running at ${this.BIND_ADDRESS}:${this.port}`);
     }
 
     public async stop(): Promise<void> {
         if (this.server) {
-            await new Promise((resolve, reject) => this.server!.close(e => (e ? reject(e) : resolve())));
-            this.server = null;
+            await this.server.close();
+            delete this.server;
         }
     }
 }

@@ -10,9 +10,9 @@ export interface IMetricValue {
 }
 
 export class Gauge {
-    private wrapped: promClient.Gauge;
+    private wrapped: promClient.Gauge<any>;
 
-    constructor(driver: typeof promClient, private config: promClient.GaugeConfiguration) {
+    constructor(driver: typeof promClient, private config: promClient.GaugeConfiguration<any>) {
         this.wrapped = new driver.Gauge(config);
     }
 
@@ -55,8 +55,8 @@ export class Gauge {
      * Returns the resetted metric-values
      *
      */
-    public resetForLabels(labels: Record<string, string>, strictCheck = true): IMetricValue[] {
-        const currentMetrics = promClient.register.getMetricsAsJSON();
+    public async resetForLabels(labels: Record<string, string>, strictCheck = true): Promise<IMetricValue[]> {
+        const currentMetrics = await promClient.register.getMetricsAsJSON();
         const metric = currentMetrics.find(m => m.name === this.config.name);
         if (!metric) {
             throw new MetricNotFoundError(this.config.name);
