@@ -1,4 +1,4 @@
-import promClient from "prom-client";
+import { Registry, Gauge as PromGauge, GaugeConfiguration } from "prom-client";
 
 import { difference, partition } from "lodash";
 import { MetricNotFoundError } from "../errors/MetricNotFoundError";
@@ -10,10 +10,10 @@ export interface IMetricValue {
 }
 
 export class Gauge {
-    private wrapped: promClient.Gauge<any>;
+    private wrapped: PromGauge<any>;
 
-    constructor(driver: typeof promClient, private config: promClient.GaugeConfiguration<any>) {
-        this.wrapped = new driver.Gauge(config);
+    constructor(private registry: Registry, private config: GaugeConfiguration<any>) {
+        this.wrapped = new PromGauge({ ...config, registers: [registry] });
     }
 
     public startTimer(): (labelSet: Record<string, string>) => void {
@@ -56,7 +56,7 @@ export class Gauge {
      *
      */
     public async resetForLabels(labels: Record<string, string>, strictCheck = true): Promise<IMetricValue[]> {
-        const currentMetrics = await promClient.register.getMetricsAsJSON();
+        const currentMetrics = await this.registry.getMetricsAsJSON();
         const metric = currentMetrics.find(m => m.name === this.config.name);
         if (!metric) {
             throw new MetricNotFoundError(this.config.name);

@@ -1,10 +1,10 @@
-import promClient from "prom-client";
+import { Registry, Summary as PromSummary, SummaryConfiguration } from "prom-client";
 
 export class Summary {
-    private wrapped: promClient.Summary<any>;
+    private wrapped: PromSummary<any>;
 
-    constructor(driver: typeof promClient, private config: promClient.SummaryConfiguration<any>) {
-        this.wrapped = new driver.Summary(config);
+    constructor(registry: Registry, private config: SummaryConfiguration<any>) {
+        this.wrapped = new PromSummary({ ...config, registers: [registry] });
     }
 
     public observe(labelSet: Record<string, string>, value: number): void {

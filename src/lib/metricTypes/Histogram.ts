@@ -1,10 +1,10 @@
-import promClient from "prom-client";
+import { Registry, Histogram as PromHistogram, HistogramConfiguration } from "prom-client";
 
 export class Histogram {
-    private wrapped: promClient.Histogram<any>;
+    private wrapped: PromHistogram<any>;
 
-    constructor(driver: typeof promClient, private config: promClient.HistogramConfiguration<any>) {
-        this.wrapped = new driver.Histogram(config);
+    constructor(registry: Registry, private config: HistogramConfiguration<any>) {
+        this.wrapped = new PromHistogram({ ...config, registers: [registry] });
     }
 
     public observe(labelSet: Record<string, string>, value: number): void {

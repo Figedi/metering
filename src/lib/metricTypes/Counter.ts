@@ -1,10 +1,10 @@
-import promClient from "prom-client";
+import { Registry, Counter as PromCounter, CounterConfiguration } from "prom-client";
 
 export class Counter {
-    private wrapped: promClient.Counter<any>;
+    private wrapped: PromCounter<any>;
 
-    constructor(driver: typeof promClient, private config: promClient.CounterConfiguration<any>) {
-        this.wrapped = new driver.Counter(config);
+    constructor(registry: Registry, private config: CounterConfiguration<any>) {
+        this.wrapped = new PromCounter({ ...config, registers: [registry] });
     }
 
     public inc(labelSet: Record<string, string>, value = 1): void {

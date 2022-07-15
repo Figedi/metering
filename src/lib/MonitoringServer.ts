@@ -1,7 +1,7 @@
 import fastify, { FastifyInstance } from "fastify";
 
-import { MeteringRecorder } from "./MeteringRecorder";
-import { Loggerlike } from "./types";
+import type { MeteringRecorder } from "./MeteringRecorder";
+import type { Loggerlike } from "./types";
 
 type MonioringMiddlewareDependencies = {
     server: FastifyInstance;
