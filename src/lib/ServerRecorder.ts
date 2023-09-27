@@ -120,7 +120,7 @@ export class FastifyMetrics {
 
         this.deps.fastify
             .addHook("onRequest", (request, _, done) => {
-                if (request.routeConfig.disableMetrics === true || !request.raw.url) {
+                if (request.routeOptions.config.disableMetrics === true || !request.raw.url) {
                     done();
                     return;
                 }
@@ -166,7 +166,7 @@ export class FastifyMetrics {
                         ? `${Math.floor(reply.statusCode / 100)}xx`
                         : reply.statusCode;
                 const route =
-                    request.routeConfig.statsId ??
+                    request.routeOptions.config.statsId ??
                     request.routeOptions.url ??
                     this.deps.options.routeMetrics?.invalidRouteGroup ??
                     "__unknown__";
