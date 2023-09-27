@@ -120,13 +120,13 @@ export class FastifyMetrics {
 
         this.deps.fastify
             .addHook("onRequest", (request, _, done) => {
-                if (request.context.config.disableMetrics === true || !request.raw.url) {
+                if (request.routeConfig.disableMetrics === true || !request.raw.url) {
                     done();
                     return;
                 }
 
                 if (this.deps.options.routeMetrics?.registeredRoutesOnly === false) {
-                    if (!this.methodBlacklist.has(request.routerMethod ?? request.method)) {
+                    if (!this.methodBlacklist.has(request.routeOptions.method ?? request.method)) {
                         this.metricStorage.set(request, {
                             hist: routeHist.startTimer(),
                             sum: routeSum.startTimer(),
@@ -140,8 +140,8 @@ export class FastifyMetrics {
                 if (
                     this.routesWhitelist.has(
                         FastifyMetrics.getRouteSlug({
-                            method: request.routerMethod,
-                            url: request.routerPath,
+                            method: request.routeOptions.method,
+                            url: request.routeOptions.url,
                         }),
                     )
                 ) {
@@ -166,11 +166,11 @@ export class FastifyMetrics {
                         ? `${Math.floor(reply.statusCode / 100)}xx`
                         : reply.statusCode;
                 const route =
-                    request.context.config.statsId ??
-                    request.routerPath ??
+                    request.routeConfig.statsId ??
+                    request.routeOptions.url ??
                     this.deps.options.routeMetrics?.invalidRouteGroup ??
                     "__unknown__";
-                const method = request.routerMethod ?? request.method;
+                const method = request.routeOptions.method ?? request.method;
 
                 const labels = {
                     [labelNames.method]: method,
