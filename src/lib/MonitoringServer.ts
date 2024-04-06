@@ -7,14 +7,14 @@ type MonioringMiddlewareDependencies = {
     server: FastifyInstance;
     meteringRecorder: MeteringRecorder;
     enableDefaultMetrics?: boolean;
-    collectExtraMetrics?: () => Promise<string>;
+    extraMetricsFn?: () => Promise<string>;
 };
 
 const assignMonitoringRoutes = ({
     server,
     meteringRecorder,
     enableDefaultMetrics,
-    collectExtraMetrics,
+    extraMetricsFn,
 }: MonioringMiddlewareDependencies) => {
     if (enableDefaultMetrics) {
         meteringRecorder.enableDefaultMetrics();
@@ -22,8 +22,8 @@ const assignMonitoringRoutes = ({
 
     server.get("/metrics", async (_: FastifyRequest, reply: FastifyReply) => {
         const metrics = await meteringRecorder.getPrometheusResponse();
-        if (collectExtraMetrics) {
-            const extraMetrics = await collectExtraMetrics();
+        if (extraMetricsFn) {
+            const extraMetrics = await extraMetricsFn();
             return reply.type("text/plain").send(metrics + extraMetrics);
         }
         return reply.type("text/plain").send(metrics);
@@ -40,7 +40,7 @@ export class MonitoringServer {
         private logger: Loggerlike,
         private enableDefaultMetrics = true,
         private port = 9500,
-        private collectExtraMetrics: () => Promise<string>,
+        private extraMetricsFn: () => Promise<string>,
     ) {}
 
     public async start(): Promise<void> {
@@ -49,7 +49,7 @@ export class MonitoringServer {
             server: this.server,
             meteringRecorder: this.recorder,
             enableDefaultMetrics: this.enableDefaultMetrics,
-            collectExtraMetrics: this.collectExtraMetrics,
+            extraMetricsFn: this.extraMetricsFn,
         });
 
         await new Promise<void>((resolve, reject) =>
