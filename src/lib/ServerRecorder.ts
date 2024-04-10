@@ -186,7 +186,7 @@ export class FastifyMetrics {
 }
 
 export const fastifyMetering = fastifyPlugin<IMetricsPluginOptions>(
-    async (fastify: FastifyInstance, options: IMetricsPluginOptions, next: () => void) => {
+    (fastify: FastifyInstance, options: IMetricsPluginOptions, next: () => void) => {
         new FastifyMetrics({ fastify, options });
         next();
     },
