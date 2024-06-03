@@ -8,8 +8,9 @@ export { Registry as PrometheusRegistry } from "prom-client"
 export class MeteringRecorder {
     public client!: typeof promClient;
     public register!: Registry;
-
     private prefix!: string;
+
+    // creates a new MeteringRecorder with an optional registry (e.g. for concurrent setups)
     constructor(prefix: string, registry: Registry) {
         this.prefix = prefix.endsWith("__") ? prefix : `${prefix}__`;
         this.client = promClient;
