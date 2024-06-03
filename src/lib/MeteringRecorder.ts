@@ -11,7 +11,7 @@ export class MeteringRecorder {
     private prefix!: string;
 
     // creates a new MeteringRecorder with an optional registry (e.g. for concurrent setups)
-    constructor(prefix: string, registry: Registry) {
+    constructor(prefix: string, registry?: Registry<any>) {
         this.prefix = prefix.endsWith("__") ? prefix : `${prefix}__`;
         this.client = promClient;
         this.register = registry ?? promClient.register;
