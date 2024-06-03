@@ -3,19 +3,21 @@ import promClient, { Registry } from "prom-client";
 import { Gauge, Summary, Histogram, Counter } from "./metricTypes";
 import { IoTimer } from "./timers";
 
+export { Registry as PrometheusRegistry } from "prom-client"
+
 export class MeteringRecorder {
     public client!: typeof promClient;
     public register!: Registry;
 
     private prefix!: string;
-    constructor(prefix: string, client = promClient) {
+    constructor(prefix: string, registry: Registry) {
         this.prefix = prefix.endsWith("__") ? prefix : `${prefix}__`;
-        this.client = client;
-        this.register = client.register;
+        this.client = promClient;
+        this.register = registry ?? promClient.register;
     }
 
     public getPrometheusResponse(): Promise<string> {
-        return this.client.register.metrics();
+        return this.register.metrics();
     }
 
     /**
@@ -26,23 +28,23 @@ export class MeteringRecorder {
     }
 
     public disableDefaultMetrics(): void {
-        this.client.register.clear();
+        this.register.clear();
     }
 
     public createHistogram(name: string, help: string, labelNames: string[], buckets: number[]): Histogram {
-        return new Histogram(this.client.register, { name: `${this.prefix}${name}`, help, labelNames, buckets });
+        return new Histogram(this.register, { name: `${this.prefix}${name}`, help, labelNames, buckets });
     }
 
     public createGauge(name: string, help: string, labelNames: string[]): Gauge {
-        return new Gauge(this.client.register, { name: `${this.prefix}${name}`, help, labelNames });
+        return new Gauge(this.register, { name: `${this.prefix}${name}`, help, labelNames });
     }
 
     public createCounter(name: string, help: string, labelNames: string[]): Counter {
-        return new Counter(this.client.register, { name: `${this.prefix}${name}`, help, labelNames });
+        return new Counter(this.register, { name: `${this.prefix}${name}`, help, labelNames });
     }
 
     public createSummary(name: string, help: string, labelNames: string[], percentiles: number[]): Summary {
-        return new Summary(this.client.register, { name: `${this.prefix}${name}`, help, labelNames, percentiles });
+        return new Summary(this.register, { name: `${this.prefix}${name}`, help, labelNames, percentiles });
     }
 
     public createIoTimer(help: string, labelNames: string[], buckets?: number[]): IoTimer {

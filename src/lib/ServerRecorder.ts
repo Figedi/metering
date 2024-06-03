@@ -141,7 +141,7 @@ export class FastifyMetrics {
                     this.routesWhitelist.has(
                         FastifyMetrics.getRouteSlug({
                             method: request.routeOptions.method,
-                            url: request.routeOptions.url,
+                            url: request.routeOptions.url ?? '',
                         }),
                     )
                 ) {
